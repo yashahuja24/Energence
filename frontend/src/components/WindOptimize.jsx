@@ -68,7 +68,7 @@ const WindOptimize = () => {
     }
 
     try {
-      const res = await axios.post('http://192.168.234.121:8000/wind/optimize', formData);
+      const res = await axios.post('http://localhost:8000/wind/optimize', formData);
       setResponse(res.data);
       setIsSubmitted(true);
     } catch (error) {

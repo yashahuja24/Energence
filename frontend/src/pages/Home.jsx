@@ -9,9 +9,7 @@ import LazyLoadSection from '../components/LazyLoading';
 const Home = () => {
   return (
     <>
-      <LazyLoadSection className="bg-gray-100">
-        <Navbar />
-      </LazyLoadSection>
+      <Navbar />
       <LazyLoadSection className="bg-gray-100">
         <Hero />
       </LazyLoadSection>

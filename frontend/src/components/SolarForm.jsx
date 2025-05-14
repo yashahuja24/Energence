@@ -87,7 +87,7 @@ const SolarForm = () => {
     }
 
     try {
-      const res = await axios.post('http://192.168.234.121:8000/solar/predict', formData);
+      const res = await axios.post('http://localhost:8000/solar/predict', formData);
       setResponse(res.data);
       setIsSubmitted(true);
     } catch (error) {

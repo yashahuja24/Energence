@@ -3,7 +3,7 @@ import { FaLeaf } from 'react-icons/fa';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-12">
+    <footer id="contact-us" className="bg-gray-800 text-white py-12">
       <div className="container mx-auto px-4">
         {/* Logo and top section */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-10">
@@ -34,9 +34,8 @@ const Footer = () => {
         {/* Navigation links */}
         <div className="flex flex-wrap justify-start gap-8 mb-10">
           <a href="#" className="hover:text-emerald-400 transition-colors">Home</a>
-          <a href="#" className="hover:text-emerald-400 transition-colors">About</a>
-          <a href="#" className="hover:text-emerald-400 transition-colors">Values</a>
-          <a href="#" className="hover:text-emerald-400 transition-colors">Contact case</a>
+          <a href="#about" className="hover:text-emerald-400 transition-colors">About</a>
+          <a href="#values" className="hover:text-emerald-400 transition-colors">Values</a>
         </div>
         
         {/* Divider */}

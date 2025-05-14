@@ -3,17 +3,31 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const initialFormDataState = {
-  temperature_2m: null,
-  relativehumidity_2m: null,
-  dewpoint_2m: null,
-  windspeed_10m: null,
-  windspeed_100m: null,
-  winddirection_10m: null,
-  winddirection_100m: null,
-  windgusts_10m: null
+  temperature_2_m_above_gnd: null,
+  relative_humidity_2_m_above_gnd: null,
+  mean_sea_level_pressure_MSL: null,
+  total_precipitation_sfc: null,
+  snowfall_amount_sfc: null,
+  total_cloud_cover_sfc: null,
+  high_cloud_cover_high_cld_lay: null,
+  medium_cloud_cover_mid_cld_lay: null,
+  low_cloud_cover_low_cld_lay: null,
+  shortwave_radiation_backwards_sfc: null,
+  wind_speed_10_m_above_gnd: null,
+  wind_direction_10_m_above_gnd: null,
+  wind_speed_80_m_above_gnd: null,
+  wind_direction_80_m_above_gnd: null,
+  wind_speed_900_mb: null,
+  wind_direction_900_mb: null,
+  wind_gust_10_m_above_gnd: null,
+  angle_of_incidence: null,
+  zenith: null,
+  azimuth: null,
+  current_generation: null,
+  consumption: null
 };
 
-const WindForm = () => {
+const SolarOptimize = () => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState(initialFormDataState);
   const [response, setResponse] = useState(null);
@@ -21,14 +35,28 @@ const WindForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const questions = [
-    { id: 'temperature_2m', question: 'Temperature 2m (°C)', type: 'number', placeholder: 'Enter temperature at 2m' },
-    { id: 'relativehumidity_2m', question: 'Relative Humidity 2m (%)', type: 'number', placeholder: 'Enter relative humidity at 2m' },
-    { id: 'dewpoint_2m', question: 'Dewpoint 2m (°C)', type: 'number', placeholder: 'Enter dewpoint at 2m' },
-    { id: 'windspeed_10m', question: 'Wind Speed 10m (m/s)', type: 'number', placeholder: 'Enter wind speed at 10m' },
-    { id: 'windspeed_100m', question: 'Wind Speed 100m (m/s)', type: 'number', placeholder: 'Enter wind speed at 100m' },
-    { id: 'winddirection_10m', question: 'Wind Direction 10m (°)', type: 'number', placeholder: 'Enter wind direction at 10m' },
-    { id: 'winddirection_100m', question: 'Wind Direction 100m (°)', type: 'number', placeholder: 'Enter wind direction at 100m' },
-    { id: 'windgusts_10m', question: 'Wind Gusts 10m (m/s)', type: 'number', placeholder: 'Enter wind gusts at 10m' }
+    { id: 'temperature_2_m_above_gnd', question: 'Temperature 2m above ground (°C)', type: 'number', placeholder: 'Enter temperature' },
+    { id: 'relative_humidity_2_m_above_gnd', question: 'Relative Humidity 2m above ground (%)', type: 'number', placeholder: 'Enter humidity' },
+    { id: 'mean_sea_level_pressure_MSL', question: 'Mean Sea Level Pressure (hPa)', type: 'number', placeholder: 'Enter pressure' },
+    { id: 'total_precipitation_sfc', question: 'Total Precipitation (mm)', type: 'number', placeholder: 'Enter precipitation' },
+    { id: 'snowfall_amount_sfc', question: 'Snowfall Amount (mm)', type: 'number', placeholder: 'Enter snowfall' },
+    { id: 'total_cloud_cover_sfc', question: 'Total Cloud Cover (%)', type: 'number', placeholder: 'Enter cloud cover' },
+    { id: 'high_cloud_cover_high_cld_lay', question: 'High Cloud Cover (%)', type: 'number', placeholder: 'Enter high cloud cover' },
+    { id: 'medium_cloud_cover_mid_cld_lay', question: 'Medium Cloud Cover (%)', type: 'number', placeholder: 'Enter medium cloud cover' },
+    { id: 'low_cloud_cover_low_cld_lay', question: 'Low Cloud Cover (%)', type: 'number', placeholder: 'Enter low cloud cover' },
+    { id: 'shortwave_radiation_backwards_sfc', question: 'Shortwave Radiation Backwards (W/m²)', type: 'number', placeholder: 'Enter radiation' },
+    { id: 'wind_speed_10_m_above_gnd', question: 'Wind Speed 10m above ground (m/s)', type: 'number', placeholder: 'Enter wind speed' },
+    { id: 'wind_direction_10_m_above_gnd', question: 'Wind Direction 10m above ground (°)', type: 'number', placeholder: 'Enter wind direction' },
+    { id: 'wind_speed_80_m_above_gnd', question: 'Wind Speed 80m above ground (m/s)', type: 'number', placeholder: 'Enter wind speed' },
+    { id: 'wind_direction_80_m_above_gnd', question: 'Wind Direction 80m above ground (°)', type: 'number', placeholder: 'Enter wind direction' },
+    { id: 'wind_speed_900_mb', question: 'Wind Speed 900mb (m/s)', type: 'number', placeholder: 'Enter wind speed' },
+    { id: 'wind_direction_900_mb', question: 'Wind Direction 900mb (°)', type: 'number', placeholder: 'Enter wind direction' },
+    { id: 'wind_gust_10_m_above_gnd', question: 'Wind Gust 10m above ground (m/s)', type: 'number', placeholder: 'Enter wind gust' },
+    { id: 'angle_of_incidence', question: 'Angle of Incidence (°)', type: 'number', placeholder: 'Enter angle' },
+    { id: 'zenith', question: 'Zenith (°)', type: 'number', placeholder: 'Enter zenith' },
+    { id: 'azimuth', question: 'Azimuth (°)', type: 'number', placeholder: 'Enter azimuth' },
+    { id: 'current_generation', question: 'Current Generation (kW)', type: 'number', placeholder: 'Enter current generation' },
+    { id: 'consumption', question: 'Consumption (kW)', type: 'number', placeholder: 'Enter consumption' }
   ];
 
   const variants = {
@@ -53,7 +81,6 @@ const WindForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Ensure the current (last) field is validated before submitting
     const currentQuestionId = questions[questions.length - 1].id;
     if (!formData[currentQuestionId] && String(formData[currentQuestionId]).trim() === '') {
         setErrors({
@@ -64,7 +91,7 @@ const WindForm = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:8000/wind/predict', formData);
+      const res = await axios.post('http://localhost:8000/solar/optimize', formData);
       setResponse(res.data);
       setIsSubmitted(true);
     } catch (error) {
@@ -216,7 +243,7 @@ const WindForm = () => {
             animate={{ opacity: 1, y: 0, transition: { duration: 0.5 } }}
             className="text-gray-700"
           >
-            <h2 className="text-2xl font-bold mb-6 text-emerald-600 text-center">Prediction Details</h2>
+            <h2 className="text-2xl font-bold mb-6 text-emerald-600 text-center">Optimization Details</h2>
             
             <div className="mb-6">
               <h3 className="text-xl font-semibold mb-3 text-gray-800">Submitted Information:</h3>
@@ -237,13 +264,40 @@ const WindForm = () => {
             </div>
 
             {response && (
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">Prediction Result:</h3>
-                <div className="p-4 border border-emerald-500 rounded-lg bg-emerald-50 shadow-sm">
-                  <p className="flex justify-between"><span className="font-medium">Status:</span> <span className="text-emerald-700">{response.status}</span></p>
-                  <p className="flex justify-between"><span className="font-medium">Predicted Power (kW):</span> <span className="text-emerald-700 font-semibold">{response.predicted_power_kw}</span></p>
+              <>
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold mb-3 text-gray-800">Optimization Result:</h3>
+                  <div className="p-4 border border-emerald-500 rounded-lg bg-emerald-50 shadow-sm space-y-2">
+                    <p className="flex justify-between"><span className="font-medium">Status:</span> <span className="text-emerald-700">{response.status}</span></p>
+                    <p className="flex justify-between"><span className="font-medium">Message:</span> <span className="text-gray-700 text-sm">{response.message}</span></p>
+                    {response.predicted_generation !== undefined && (
+                      <p className="flex justify-between"><span className="font-medium">Predicted Generation (kW):</span> <span className="text-emerald-700 font-semibold">{response.predicted_generation.toFixed(2)}</span></p>
+                    )}
+                    {response.optimized_deficit !== undefined && (
+                      <p className="flex justify-between"><span className="font-medium">Optimized Deficit (kW):</span> <span className="text-emerald-700 font-semibold">{response.optimized_deficit.toFixed(2)}</span></p>
+                    )}
+                  </div>
                 </div>
-              </div>
+
+                {response.optimized_parameters && (
+                  <div className="mb-6">
+                    <h3 className="text-xl font-semibold mb-3 text-gray-800">Optimized Parameters:</h3>
+                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm max-h-60 overflow-y-auto">
+                      <ul className="space-y-2">
+                        {Object.entries(response.optimized_parameters).map(([key, value]) => {
+                          const questionLabel = questions.find(q => q.id === key)?.question || key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                          return (
+                            <li key={key} className="flex justify-between">
+                              <span className="font-medium text-gray-600">{questionLabel}:</span>
+                              <span className="text-gray-800">{String(value)}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
             {errors.submit && !response && <p className="text-red-500 text-sm mt-2 mb-4 text-center">{errors.submit}</p>}
 
@@ -262,4 +316,4 @@ const WindForm = () => {
   );
 };
 
-export default WindForm;
+export default SolarOptimize; 

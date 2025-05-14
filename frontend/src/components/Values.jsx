@@ -127,7 +127,7 @@ const Values = () => {
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section id="values" className="py-16 bg-white">
       <div className="px-4 mx-auto max-w-screen-xl sm:px-6 lg:px-8">
         <div className="text-center mb-12 relative values-heading-container">
           <AnimatedLeaf />

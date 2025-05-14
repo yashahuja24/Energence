@@ -7,6 +7,7 @@ const Hero = () => {
 
   return (
     <div 
+        id="home"
       className="relative bg-cover bg-center text-white py-20 px-4 md:px-10 lg:px-20 min-h-[calc(100vh-80px)] flex flex-col justify-center items-start"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
@@ -22,7 +23,7 @@ const Hero = () => {
         Energence combines advanced forecasting and smart optimization to help you take control of your energy. With powerful machine learning models, we predict usage patterns and optimize consumption saving energy, cutting costs, and building a more sustainable future.
         </p>
 
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="flex flex-col space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
           <button
             onClick={() => navigate('/wind')}
             className="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-8 rounded-md text-lg transition duration-300 ease-in-out transform hover:scale-105"
@@ -30,10 +31,22 @@ const Hero = () => {
             Predict Wind Energy Consumption
           </button>
           <button
+            onClick={() => navigate('/windoptimize')}
+            className="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-8 rounded-md text-lg transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            Optimize Wind Energy Consumption
+          </button>
+          <button
             onClick={() => navigate('/solar')}
             className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3 px-8 rounded-md text-lg transition duration-300 ease-in-out transform hover:scale-105"
           >
             Predict Solar Energy Consumption
+          </button>
+          <button
+            onClick={() => navigate('/solaroptimize')}
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3 px-8 rounded-md text-lg transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            Optimize Solar Energy Consumption
           </button>
         </div>
       </div>

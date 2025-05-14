@@ -3,7 +3,7 @@ import globeImg from "../assets/about1.png";
 import cardImg from "../assets/about2.png";
 import greenBgImg from "../assets/about3.png";
 import { useNavigate } from 'react-router-dom';
-import LazyLoadSection from "./LazyLoading";
+import LazyLoadSection from "../components/LazyLoading";
 
 const About = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const About = () => {
                 alt="Globe with solar panel"
                 className="rounded-xl w-full"
             />
-            <div className="absolute bottom-8 left-[-50px] w-52 sm:w-60 shadow-lg">
+            <div className="absolute bottom-4 left-[-20px] xs:left-[-30px] sm:left-[-50px] w-40 xs:w-48 sm:w-60 shadow-lg">
                 <img
                 src={cardImg}
                 alt="Info card"
@@ -43,28 +43,40 @@ const About = () => {
         </div>
         </LazyLoadSection>
         <LazyLoadSection className="bg-gray-100">
-      <div className="relative w-full">
-        <img
-          src={greenBgImg}
-          alt="Green background with windmill"
-          className="w-full object-cover"
-        />
+            <div className="relative w-full">
+                <img
+                src={greenBgImg}
+                alt="Green background with windmill"
+                className="w-full object-cover h-[600px] sm:h-auto"
+                />
 
-        <div className="absolute inset-0 flex flex-col justify-center px-6 lg:px-20 text-white max-w-4xl">
-          <h3 className="text-2xl lg:text-3xl font-semibold mb-4">
-            Energy that Doesn't Cost the Earth
-          </h3>
-          <p className="mb-6">
-            To get started with the journey to a more sustainable future, click the button below to predict your energy consumption.
-          </p>
-          <button onClick={() => navigate('/wind')} className="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-5 rounded-full w-fit">
-            Predict Wind Energy Consumption
-          </button>
-          <button onClick={() => navigate('/solar')} className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-5 rounded-full w-fit mt-5">
-            Predict Solar Energy Consumption
-          </button>
-        </div>
-      </div>
+                <div className="absolute inset-0 flex flex-col justify-center items-center text-center sm:items-start sm:text-left p-4 sm:p-6 md:px-12 lg:px-20 text-white">
+                <div className="max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl">
+                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-3 sm:mb-4">
+                    Energy that Doesn't Cost the Earth
+                    </h3>
+                    <p className="mb-4 sm:mb-6 text-sm sm:text-base">
+                    To get started with the journey to a more sustainable future, click the button below to predict your energy consumption.
+                    </p>
+                    <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0 items-center sm:items-start">
+                    <button onClick={() => navigate('/wind')} className="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 sm:px-5 rounded-full w-full sm:w-auto text-sm sm:text-base">
+                        Predict Wind Energy
+                    </button>
+                    <button onClick={() => navigate('/solar')} className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-4 sm:px-5 rounded-full w-full sm:w-auto text-sm sm:text-base">
+                        Predict Solar Energy
+                    </button>
+                    </div>
+                    <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0 mt-3 sm:mt-4 items-center sm:items-start">
+                    <button onClick={() => navigate('/windoptimize')} className="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 sm:px-5 rounded-full w-full sm:w-auto text-sm sm:text-base">
+                        Optimize Wind Energy
+                    </button>
+                    <button onClick={() => navigate('/solaroptimize')} className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 px-4 sm:px-5 rounded-full w-full sm:w-auto text-sm sm:text-base">
+                        Optimize Solar Energy
+                    </button>
+                    </div>
+                </div>
+                </div>
+            </div>
       </LazyLoadSection>
     </section>
   );
