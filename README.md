@@ -1,4 +1,4 @@
-# 🌟 Energence
+# 🍀 Energence
 
 Energence is a renewable energy optimization platform that predicts and optimizes solar and wind power generation using machine learning models.
 
