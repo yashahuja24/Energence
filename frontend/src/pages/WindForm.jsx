@@ -1,9 +1,13 @@
 import React from 'react'
+import WindForm from '../components/WindForm'
 
-const WindForm = () => {
+const WindFormPage = () => {
   return (
-    <div>WindForm</div>
+    <div>
+      <h1 className='text-2xl font-bold text-center p-4'>Wind Form</h1>
+      <WindForm />
+    </div>
   )
 }
 
-export default WindForm
+export default WindFormPage

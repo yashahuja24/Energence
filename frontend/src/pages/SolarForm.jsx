@@ -1,9 +1,13 @@
-import React from 'react'
+import React from 'react';
+import SolarForm from '../components/SolarForm';
 
-const SolarForm = () => {
+const SolarFormPage = () => {
   return (
-    <div>SolarForm</div>
-  )
-}
+    <div>
+      <h1 className='text-2xl font-bold text-center p-4'>Solar Form</h1>
+      <SolarForm />
+    </div>
+  );
+};
 
-export default SolarForm
+export default SolarFormPage;
