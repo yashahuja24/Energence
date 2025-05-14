@@ -4,7 +4,7 @@ import WindOptimize from '../components/WindOptimize'
 const WindOptimizePage = () => {
   return (
     <div>
-      <h1 className='text-2xl font-bold text-center p-4'>Wind Energy Prediction Form</h1>
+      <h1 className='text-2xl font-bold text-center p-4'>Wind Energy Optimization Form</h1>
       <WindOptimize />
     </div>
   )
