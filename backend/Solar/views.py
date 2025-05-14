@@ -96,7 +96,9 @@ class SolarOptimize(APIView):
     def post(self, request):
         try:
             logger.info("Received request for optimization.")
+            print("Received request for solar optimization.")
             data = request.data
+            print(f"Received data: {data}")
 
             # 1. Extract 20 features from frontend
             logger.debug("Extracting features from frontend data.")
@@ -122,13 +124,16 @@ class SolarOptimize(APIView):
                 float(data["zenith"]),
                 float(data["azimuth"])
             ]
+            print(f"Extracted features: {features}")
 
             current_generation = float(data["current_generation"])
             consumption = float(data["consumption"])
+            print(f"Current generation: {current_generation}, Consumption: {consumption}")
 
             deficit = current_generation - consumption
             if deficit >= 0:
                 logger.info(f"Power generation is sufficient: deficit is {deficit}.")
+                print(f"Power generation is sufficient: deficit is {deficit}.")
                 return Response({
                     "status": "sufficient",
                     "message": "Power generation already sufficient.",
@@ -136,14 +141,18 @@ class SolarOptimize(APIView):
                 })
 
             logger.info("Deficit detected, starting optimization process.")
+            print("Deficit detected, starting optimization process.")
 
             # 2. Load model and scaler
             logger.debug("Loading model and scaler.")
+            print("Loading model and scaler.")
             model = tf.keras.models.load_model(MODEL_PATH)
             scaler = joblib.load(SCALER_PATH)
+            print("Model and scaler loaded.")
 
             # 3. Set optimization bounds (±20%)
             logger.debug("Setting optimization bounds based on features.")
+            print("Setting optimization bounds based on features.")
             bounds = []
             for val in features:
                 low = val * 0.8
@@ -151,34 +160,46 @@ class SolarOptimize(APIView):
                 if low == high:
                     high += 1
                 bounds.append((low, high))
+            print(f"Optimization bounds: {bounds}")
 
             # 4. Optimization function
             logger.debug("Starting optimization with differential evolution.")
+            print("Starting optimization with differential evolution.")
             def objective(x):
+                print(f"Predicting for input: {x}")
                 x_scaled = scaler.transform([x])
                 pred = model.predict(x_scaled, verbose=0)[0][0]
                 penalty = max(0, consumption - pred) * 100
                 return -pred + penalty
 
-            result = differential_evolution(objective, bounds=bounds, seed=42, maxiter=100)
+            # Experiment with reducing maxiter here!
+            result = differential_evolution(objective, bounds=bounds, seed=42, maxiter=50) # Changed maxiter to 50
             optimized_input = result.x
             optimized_scaled = scaler.transform([optimized_input])
             predicted_power = model.predict(optimized_scaled, verbose=0)[0][0]
+            print(f"Differential evolution result: {result}")
+            print(f"Optimized input: {optimized_input}, Predicted power after initial optimization: {predicted_power}")
 
             if predicted_power > consumption:
                 logger.info(f"Predicted power {predicted_power} exceeds consumption {consumption}. Max power optimization starting.")
+                print(f"Predicted power {predicted_power} exceeds consumption {consumption}. Max power optimization starting.")
 
                 # 5. Maximize generation
                 def max_power(x):
+                    print(f"Max Power for input: {x}")
                     x_scaled = scaler.transform([x])
                     return -model.predict(x_scaled, verbose=0)[0][0]
 
-                max_result = differential_evolution(max_power, bounds=bounds, seed=42, maxiter=100)
+                # Experiment with reducing maxiter here too!
+                max_result = differential_evolution(max_power, bounds=bounds, seed=42, maxiter=50) # Changed maxiter to 50
                 best_input = max_result.x
                 best_scaled = scaler.transform([best_input])
                 best_pred = model.predict(best_scaled, verbose=0)[0][0]
+                print(f"Max power optimization result: {max_result}")
+                print(f"Best input: {best_input}, Best predicted generation: {best_pred}")
 
                 logger.info(f"Optimization successful. Best predicted generation: {best_pred}.")
+                print(f"Optimization successful. Best predicted generation: {best_pred}.")
 
                 return Response({
                     "status": "optimized",
@@ -210,6 +231,7 @@ class SolarOptimize(APIView):
                 })
             else:
                 logger.warning("Optimization completed, but predicted generation still below consumption.")
+                print("Optimization completed, but predicted generation still below consumption.")
                 return Response({
                     "status": "optimized_but_insufficient",
                     "message": "Optimization done, but predicted generation still below consumption.",
@@ -218,6 +240,7 @@ class SolarOptimize(APIView):
 
         except Exception as e:
             logger.error(f"Error occurred: {str(e)}")
+            print(f"Error occurred: {str(e)}")
             return Response({
                 "status": "error",
                 "message": str(e)

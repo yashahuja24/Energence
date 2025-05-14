@@ -12,6 +12,11 @@ import json
 from tensorflow.keras.models import load_model
 from scipy.optimize import differential_evolution
 import os
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Load model and scaler
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -89,8 +94,15 @@ class WindOptimize(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        if model is None or scaler is None:
+            return Response({
+                "status": "error",
+                "message": "Model or scaler not loaded."
+            }, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         try:
             data = request.data
+            print('data recieved for wind')
 
             # Extract current generation and consumption
             current_generation = float(data.get("current_generation", 0))
@@ -103,10 +115,20 @@ class WindOptimize(APIView):
                     "power_difference": current_generation - consumption
                 })
 
-            # Extract features
-            initial_values = [float(data.get(feature, 0)) for feature in FEATURE_NAMES]
+            # Extract features, handling potential missing keys
+            initial_values = [float(data.get(feature, np.nan)) for feature in FEATURE_NAMES]
+            print('Initial Values')
+
+            # Check if all features were provided
+            if np.isnan(initial_values).any():
+                missing_features = [FEATURE_NAMES[i] for i, val in enumerate(initial_values) if np.isnan(val)]
+                return Response({
+                    "status": "error",
+                    "message": f"Missing required features: {', '.join(missing_features)}"
+                }, status.HTTP_400_BAD_REQUEST)
 
             def predict_power(x):
+                print(f"Predicting for input: {x}")
                 scaled = scaler.transform([x])
                 pred = model.predict(scaled, verbose=0)[0][0]
                 return -pred  # minimize negative => maximize prediction
@@ -123,26 +145,37 @@ class WindOptimize(APIView):
                 (0, 25),      # windgusts_10m
             ]
 
-            # Run optimization starting from current values
-            result = differential_evolution(predict_power, bounds, seed=42)
+            # Ensure the number of initial values matches the number of bounds
+            if len(initial_values) != len(bounds):
+                return Response({
+                    "status": "error",
+                    "message": "Number of input features does not match the expected number."
+                }, status.HTTP_400_BAD_REQUEST)
 
+            print('Predicting Power')
+            # Run optimization starting from current values with a limited number of iterations
+            result = differential_evolution(predict_power, bounds, seed=42, maxiter=100)
+
+            print('Making Predictions')
             # Final best prediction
             best_input = result.x
             best_scaled = scaler.transform([best_input])
             predicted_power = model.predict(best_scaled, verbose=0)[0][0]
 
+            print('Optimizing fetaures')
+            optimized_parameters = dict(zip(FEATURE_NAMES, best_input))
+
             return Response({
                 "status": "ok",
-                "optimized_parameters": dict(zip(FEATURE_NAMES, best_input)),
-                "predicted_generation": predicted_power,
+                "optimized_parameters": {k: round(v, 2) for k, v in optimized_parameters.items()},
+                "predicted_generation": round(predicted_power, 4),
                 "consumption": consumption,
-                "power_difference": predicted_power - consumption
+                "power_difference": round(predicted_power - consumption, 4)
             })
 
         except Exception as e:
+            logger.error(f"Error processing wind optimization request: {e}")
             return Response({
                 "status": "error",
                 "message": str(e)
-            })
-
-# Create your views here.
+            }, status.HTTP_500_INTERNAL_SERVER_ERROR)
