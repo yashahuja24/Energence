@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 import numpy as np
 import tensorflow as tf
 import joblib
@@ -55,10 +56,13 @@ class PredictSolar(APIView):
             input_data = [data[feature] for feature in feature_names]
             input_array = np.array(input_data).reshape(1, -1)
 
-            # Load scaler and model
-            scaler = joblib.load("scaler.save")
-            model = tf.keras.models.load_model("solar_power_model.h5")
+            # Get absolute path to the scaler and model
+            SCALER_PATH = os.path.join(settings.BASE_DIR, "Solar", "solar_scaler.save")
+            MODEL_PATH = os.path.join(settings.BASE_DIR, "Solar", "solar_power_model.h5")
 
+            # Load scaler and model
+            scaler = joblib.load(SCALER_PATH)
+            model = tf.keras.models.load_model(MODEL_PATH)
             # Preprocess and predict
             input_scaled = scaler.transform(input_array)
             prediction = model.predict(input_scaled)[0][0]
@@ -66,10 +70,10 @@ class PredictSolar(APIView):
             return Response({
                 "status": "success",
                 "predicted_power_kw": float(prediction)
-            })
+            }, status.HTTP_202_ACCEPTED)
 
         except Exception as e:
             return Response({
                 "status": "error",
                 "message": str(e)
-            }, status=400)
+            }, status.HTTP_500_INTERNAL_SERVER_ERROR)
