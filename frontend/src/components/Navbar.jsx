@@ -100,7 +100,7 @@ const Navbar = () => {
         <div className="hidden md:flex flex-col items-end group cursor-pointer">
           <span className="text-sm text-teal-200">Call Us</span>
           <span className="text-xl font-semibold text-white group-hover:text-teal-200 transition-colors duration-300">
-            +91 70038 68040
+            +91 9829610155
           </span>
         </div>
 
